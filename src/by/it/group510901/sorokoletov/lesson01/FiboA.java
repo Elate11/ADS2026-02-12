@@ -48,7 +48,7 @@ public class FiboA {
         if (n == 1) {
             return BigInteger.ONE;
         }
-        // Рекурсивное определение: F(n) = F(n-1) + F(n-2)
+
         return slowA(n - 1).add(slowA(n - 2));
 
     }
