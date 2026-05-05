@@ -45,15 +45,15 @@ public class B_EditDist {
         int m = one.length();
         int n = two.length();
 
-        // Создаем DP таблицу (m+1) x (n+1)
+
         int[][] dp = new int[m + 1][n + 1];
 
-        // Инициализация первой строки и первого столбца
+
         for (int i = 0; i <= m; i++) {
-            dp[i][0] = i; // удаление всех символов из one
+            dp[i][0] = i;
         }
         for (int j = 0; j <= n; j++) {
-            dp[0][j] = j; // вставка всех символов в one
+            dp[0][j] = j;
         }
 
         // Заполнение таблицы

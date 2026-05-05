@@ -45,7 +45,7 @@ public class A_Knapsack {
             gold[i]=scanner.nextInt();
         }
 
-        // dp[i] - максимальный вес, который можно набрать для вместимости i
+
         int[] dp = new int[w + 1];
         dp[0] = 0;
 

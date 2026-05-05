@@ -37,11 +37,10 @@ public class B_Knapsack {
             gold[i]=scanner.nextInt();
         }
 
-        // dp[j] - максимальный вес, который можно набрать для вместимости j с учетом просмотренных предметов
+
         int[] dp = new int[w + 1];
 
         for (int i = 0; i < n; i++) {
-            // идем справа налево, чтобы каждый слиток использовался не более одного раза
             for (int j = w; j >= gold[i]; j--) {
                 dp[j] = Math.max(dp[j], dp[j - gold[i]] + gold[i]);
             }

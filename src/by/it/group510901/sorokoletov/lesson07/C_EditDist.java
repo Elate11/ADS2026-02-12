@@ -54,10 +54,10 @@ public class C_EditDist {
         int m = one.length();
         int n = two.length();
 
-        // Создаем DP таблицу (m+1) x (n+1)
+
         int[][] dp = new int[m + 1][n + 1];
 
-        // Инициализация первой строки и первого столбца
+
         for (int i = 0; i <= m; i++) {
             dp[i][0] = i;
         }
@@ -79,13 +79,13 @@ public class C_EditDist {
             }
         }
 
-        // Восстановление редакционного предписания
+
         StringBuilder result = new StringBuilder();
         int i = m, j = n;
 
         while (i > 0 || j > 0) {
             if (i > 0 && j > 0 && one.charAt(i - 1) == two.charAt(j - 1)) {
-                // Совпадение - копирование
+
                 result.insert(0, "#,");
                 i--;
                 j--;
