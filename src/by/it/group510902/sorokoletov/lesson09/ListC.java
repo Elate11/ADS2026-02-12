@@ -73,7 +73,7 @@ public class ListC<E> implements List<E> {
         int ptr1 = 0;
         int ptr2 = 0;
 
-        while (ptr1< newElements.length || ptr2< elements.length){
+        while (ptr1< newElements.length && ptr2< elements.length){
             if (ptr1 == index){
                 newElements[ptr1] = element;
                 ptr1++;
