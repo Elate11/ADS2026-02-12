@@ -241,27 +241,101 @@ public class ListC<E> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        return null;
+        ListC<E> result = new ListC<>();
+        for (int i = fromIndex; i < toIndex; i++) {
+            result.add(get(i));
+        }
+        return result;
     }
 
     @Override
     public ListIterator<E> listIterator(int index) {
-        return null;
+        return new ListIterator<E>() {
+            int cursor = index;
+            int lastRet = -1;
+
+            @Override
+            public boolean hasNext() {
+                return cursor < size();
+            }
+
+            @Override
+            public E next() {
+                lastRet = cursor;
+                return get(cursor++);
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return cursor > 0;
+            }
+
+            @Override
+            public E previous() {
+                lastRet = --cursor;
+                return get(cursor);
+            }
+
+            @Override
+            public int nextIndex() {
+                return cursor;
+            }
+
+            @Override
+            public int previousIndex() {
+                return cursor - 1;
+            }
+
+            @Override
+            public void remove() {
+                ListC.this.remove(lastRet);
+                cursor = lastRet;
+                lastRet = -1;
+            }
+
+            @Override
+            public void set(E e) {
+                ListC.this.set(lastRet, e);
+            }
+
+            @Override
+            public void add(E e) {
+                ListC.this.add(cursor, e);
+                cursor++;
+                lastRet = -1;
+            }
+        };
     }
 
     @Override
     public ListIterator<E> listIterator() {
-        return null;
+        return listIterator(0);
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return null;
+        if (a.length < size) {
+            a = (T[]) new Object[size];
+        }
+
+        for (int i = 0; i < size; i++) {
+            a[i] = (T) elements[i];
+        }
+
+        if (a.length > size) {
+            a[size] = null;
+        }
+
+        return a;
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        Object[] result = new Object[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = elements[i];
+        }
+        return result;
     }
 
     /////////////////////////////////////////////////////////////////////////
