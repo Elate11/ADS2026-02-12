@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 
 public class MyPriorityQueue<E> implements java.util.Queue<E> {
 
-    @SuppressWarnings("unchecked")
+
     private E[] queue = (E[]) new Object[11];
     private int size = 0;
 
@@ -223,7 +223,7 @@ public class MyPriorityQueue<E> implements java.util.Queue<E> {
         return -1;
     }
 
-    @SuppressWarnings("unchecked")
+
     private void ensureCapacity() {
         if (size == queue.length) {
             int newCap = queue.length * 2;
