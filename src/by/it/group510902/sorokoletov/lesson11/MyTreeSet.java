@@ -20,10 +20,13 @@ public class MyTreeSet<E extends Comparable<? super E>> implements Set<E> {
         int oldCapacity = elements.length;
         int newCapacity = oldCapacity + (oldCapacity >> 1);
         Object[] newElements = new Object[newCapacity];
-        System.arraycopy(elements, 0, newElements, 0, size);
+        for (int i = 0; i < size; i++) {
+            newElements[i] = elements[i];
+        }
         elements = newElements;
     }
 
+    @SuppressWarnings("unchecked")
     private int binarySearch(E key) {
         int low = 0;
         int high = size - 1;
@@ -31,9 +34,13 @@ public class MyTreeSet<E extends Comparable<? super E>> implements Set<E> {
             int mid = (low + high) >>> 1;
             E midVal = (E) elements[mid];
             int cmp = midVal.compareTo(key);
-            if (cmp < 0) low = mid + 1;
-            else if (cmp > 0) high = mid - 1;
-            else return mid;
+            if (cmp < 0) {
+                low = mid + 1;
+            } else if (cmp > 0) {
+                high = mid - 1;
+            } else {
+                return mid;
+            }
         }
         return -(low + 1);
     }
@@ -49,13 +56,35 @@ public class MyTreeSet<E extends Comparable<? super E>> implements Set<E> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean contains(Object o) {
         if (o == null) return false;
+        E key;
         try {
-            return binarySearch((E) o) >= 0;
-        } catch (ClassCastException e) {
+            key = (E) o;
+        } catch (ClassCastException ex) {
             return false;
         }
+        int low = 0;
+        int high = size - 1;
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            E midVal = (E) elements[mid];
+            int cmp;
+            try {
+                cmp = midVal.compareTo(key);
+            } catch (ClassCastException ex) {
+                return false;
+            }
+            if (cmp < 0) {
+                low = mid + 1;
+            } else if (cmp > 0) {
+                high = mid - 1;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -65,25 +94,39 @@ public class MyTreeSet<E extends Comparable<? super E>> implements Set<E> {
         if (pos >= 0) return false;
         int insertPos = -(pos + 1);
         if (size == elements.length) grow();
-        System.arraycopy(elements, insertPos, elements, insertPos + 1, size - insertPos);
+
+        for (int i = size; i > insertPos; i--) {
+            elements[i] = elements[i - 1];
+        }
         elements[insertPos] = e;
         size++;
         return true;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean remove(Object o) {
         if (o == null) return false;
+        E key;
         try {
-            int pos = binarySearch((E) o);
-            if (pos < 0) return false;
-            System.arraycopy(elements, pos + 1, elements, pos, size - pos - 1);
-            size--;
-            elements[size] = null;
-            return true;
-        } catch (ClassCastException e) {
+            key = (E) o;
+        } catch (ClassCastException ex) {
             return false;
         }
+        int pos;
+        try {
+            pos = binarySearch(key);
+        } catch (ClassCastException ex) {
+            return false;
+        }
+        if (pos < 0) return false;
+
+        for (int i = pos; i < size - 1; i++) {
+            elements[i] = elements[i + 1];
+        }
+        size--;
+        elements[size] = null;
+        return true;
     }
 
     @Override
@@ -97,15 +140,14 @@ public class MyTreeSet<E extends Comparable<? super E>> implements Set<E> {
     @Override
     public String toString() {
         if (isEmpty()) return "[]";
-        String result = "[";
-        boolean first = true;
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
         for (int i = 0; i < size; i++) {
-            if (!first) result += ", ";
-            result += elements[i];
-            first = false;
+            if (i > 0) sb.append(", ");
+            sb.append(elements[i]);
         }
-        result += "]";
-        return result;
+        sb.append(']');
+        return sb.toString();
     }
 
     @Override
@@ -127,13 +169,25 @@ public class MyTreeSet<E extends Comparable<? super E>> implements Set<E> {
         return modified;
     }
 
+    private boolean collectionContains(Collection<?> c, Object value) {
+        for (Object item : c) {
+            if (item == null) {
+                if (value == null) return true;
+            } else if (item.equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean removeAll(Collection<?> c) {
         if (c == null) throw new NullPointerException();
         boolean modified = false;
         Iterator<E> it = iterator();
         while (it.hasNext()) {
-            if (c.contains(it.next())) {
+            E value = it.next();
+            if (collectionContains(c, value)) {
                 it.remove();
                 modified = true;
             }
@@ -147,7 +201,8 @@ public class MyTreeSet<E extends Comparable<? super E>> implements Set<E> {
         boolean modified = false;
         Iterator<E> it = iterator();
         while (it.hasNext()) {
-            if (!c.contains(it.next())) {
+            E value = it.next();
+            if (!collectionContains(c, value)) {
                 it.remove();
                 modified = true;
             }
@@ -167,6 +222,7 @@ public class MyTreeSet<E extends Comparable<? super E>> implements Set<E> {
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public E next() {
                 if (cursor >= size) throw new NoSuchElementException();
                 lastRet = cursor;
@@ -185,11 +241,25 @@ public class MyTreeSet<E extends Comparable<? super E>> implements Set<E> {
 
     @Override
     public Object[] toArray() {
-        throw new UnsupportedOperationException();
+        Object[] result = new Object[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = elements[i];
+        }
+        return result;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
-        throw new UnsupportedOperationException();
+        if (a.length < size) {
+            a = (T[]) new Object[size];
+        }
+        for (int i = 0; i < size; i++) {
+            a[i] = (T) elements[i];
+        }
+        if (a.length > size) {
+            a[size] = null;
+        }
+        return a;
     }
 }
