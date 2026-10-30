@@ -23,7 +23,6 @@ public class SitesB {
         public String find(String x) {
             String p = parent.get(x);
             if (!p.equals(x)) {
-                // рекурсивно сжимаем путь до корня
                 String root = find(p);
                 parent.put(x, root);
                 return root;

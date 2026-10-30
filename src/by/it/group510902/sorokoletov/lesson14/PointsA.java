@@ -4,7 +4,7 @@ import java.util.*;
 
 public class PointsA {
 
-    // Класс DSU (Disjoint Set Union) с эвристикой по размеру
+
     static class DSU {
         private final int[] parent;
         private final int[] size;
@@ -20,7 +20,7 @@ public class PointsA {
 
         public int find(int x) {
             if (parent[x] != x) {
-                parent[x] = find(parent[x]); // сжатие путей
+                parent[x] = find(parent[x]);
             }
             return parent[x];
         }
@@ -29,7 +29,7 @@ public class PointsA {
             int ra = find(a);
             int rb = find(b);
             if (ra == rb) return;
-            // объединяем меньшее дерево с большим
+
             if (size[ra] < size[rb]) {
                 int tmp = ra;
                 ra = rb;
@@ -44,7 +44,7 @@ public class PointsA {
         }
     }
 
-    // Точка в 3D-пространстве
+
     static class Point {
         final long x, y, z;
 
@@ -54,7 +54,7 @@ public class PointsA {
             this.z = z;
         }
 
-        // Квадрат расстояния (используем long, чтобы избежать переполнения)
+
         long distSq(Point other) {
             long dx = x - other.x;
             long dy = y - other.y;
@@ -80,12 +80,12 @@ public class PointsA {
             points[i] = new Point(x, y, z);
         }
 
-        // Сравниваем квадраты расстояний, чтобы избежать извлечения корня
+
         long Dsq = D * D;
 
         DSU dsu = new DSU(N);
 
-        // Объединяем все пары точек, расстояние между которыми < D
+
         for (int i = 0; i < N; i++) {
             for (int j = i + 1; j < N; j++) {
                 if (points[i].distSq(points[j]) < Dsq) {
@@ -94,7 +94,7 @@ public class PointsA {
             }
         }
 
-        // Собираем размеры кластеров
+
         Map<Integer, Integer> clusterSizes = new HashMap<>();
         for (int i = 0; i < N; i++) {
             int root = dsu.find(i);
